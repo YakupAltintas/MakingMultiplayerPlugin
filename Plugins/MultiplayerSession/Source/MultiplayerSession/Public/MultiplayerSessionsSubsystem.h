@@ -20,12 +20,12 @@ public:
 	void createSession(int32 NumpublicConnections, FString MatchType);
 	void findSession(int32 MaxSearchResult);
 	void joinSession(const FOnlineSessionSearchResult &SessionResult);
-	void DestroySession();
-	void StartSession();
+	void destroySession();
+	void startSession();
 protected:
 
 	void onCreateSessionComplate(FName SessionName,bool bWasSuccesful);
-	void onfindSessionsComplate(bool bWasSuccesful);
+	void onFindSessionsComplate(bool bWasSuccesful);
 	void onJoinSessionComplate(FName SessionName,EOnJoinSessionCompleteResult::Type Result);
 	void onDestroySessionComplate(FName SessionName, bool bWasSuccesful);
 	void onStartSessionComplate(FName SessionName, bool bWasSuccesful);
@@ -33,6 +33,8 @@ protected:
 
 private:
 	IOnlineSessionPtr sessionInterface;
+	TSharedPtr<FOnlineSessionSettings> lastSessionSettings;
+
 	FOnCreateSessionCompleteDelegate createSessionComplateDelegate;
 	FDelegateHandle createSessionComplateDelegateHandle;
 

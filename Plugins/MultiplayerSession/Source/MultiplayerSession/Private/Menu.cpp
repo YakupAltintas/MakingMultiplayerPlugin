@@ -5,8 +5,11 @@
 #include "Components/Button.h"
 #include "MultiplayerSessionsSubsystem.h"
 
-void UMenu::menuSetup()
+void UMenu::menuSetup(int32 NumberOfPublicConnections , FString TypeOfMatch )
 {
+	numPublicConnections = NumberOfPublicConnections;
+	matchType = TypeOfMatch;
+
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	bIsFocusable = true;
@@ -31,6 +34,7 @@ void UMenu::menuSetup()
 		multiplayerSessionsSubsystem = gameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
 	}
 
+
 }
 
 bool UMenu::Initialize()
@@ -51,6 +55,14 @@ bool UMenu::Initialize()
 	return true;
 }
 
+void UMenu::NativeDestruct()
+{
+	menuTearDown();
+	Super::NativeDestruct();
+}
+
+
+
 void UMenu::hostButtonClicked()
 {
 	if (GEngine)
@@ -59,7 +71,12 @@ void UMenu::hostButtonClicked()
 	}
 	if (multiplayerSessionsSubsystem)
 	{
-		multiplayerSessionsSubsystem->createSession(4,"FreeForAll");
+		multiplayerSessionsSubsystem->createSession(numPublicConnections,matchType);
+		UWorld* world = GetWorld();
+		if (world)
+		{
+			world->ServerTravel(mapPath);
+		}
 	}
 }
 
@@ -68,5 +85,21 @@ void UMenu::joinButtonClicked()
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Join Butona tiklandi")));
+	}
+}
+
+void UMenu::menuTearDown()
+{
+	RemoveFromParent();
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		APlayerController* playerController = world->GetFirstPlayerController();
+		if (playerController)
+		{
+			FInputModeGameOnly inputModeData;
+			playerController->SetInputMode(inputModeData);
+			playerController->SetShowMouseCursor(false);
+		}
 	}
 }

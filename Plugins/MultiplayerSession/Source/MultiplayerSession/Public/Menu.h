@@ -15,11 +15,14 @@ class MULTIPLAYERSESSION_API UMenu : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
-	void menuSetup();
+	void menuSetup(int32 NumberOfPublicConnections=4,FString TypeOfMatch=FString(TEXT("FreeForAll")));
 
 protected:
 	virtual bool Initialize() override;
+	virtual void NativeDestruct() override;
 private:
+	FString mapPath = "/Game/ThirdPerson/Maps/LobbyMap?listen"; 
+
 	UPROPERTY(meta = (BindWidget));
 	class UButton* hostButton; 
 
@@ -32,5 +35,10 @@ private:
 	UFUNCTION()
 	void joinButtonClicked();
 
+	void menuTearDown();
+
 	class UMultiplayerSessionsSubsystem* multiplayerSessionsSubsystem;
+
+	int32 numPublicConnections{ 4 };
+	FString matchType{TEXT("FreeForAll")};
 };
