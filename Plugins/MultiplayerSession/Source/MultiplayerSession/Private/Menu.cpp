@@ -2,6 +2,8 @@
 
 
 #include "Menu.h"
+#include "Components/Button.h"
+#include "MultiplayerSessionsSubsystem.h"
 
 void UMenu::menuSetup()
 {
@@ -22,5 +24,49 @@ void UMenu::menuSetup()
 			playerController->SetShowMouseCursor(true);
 
 		}
+	}
+	UGameInstance* gameInstance = GetGameInstance();
+	if (gameInstance)
+	{
+		multiplayerSessionsSubsystem = gameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
+	}
+
+}
+
+bool UMenu::Initialize()
+{
+	if (!Super::Initialize())
+	{
+		return false;
+	}
+
+	if (hostButton)
+	{
+		hostButton->OnClicked.AddDynamic(this, &ThisClass::hostButtonClicked);
+	}
+	if (joinButton)
+	{
+		joinButton->OnClicked.AddDynamic(this, &ThisClass::joinButtonClicked);
+	}
+	return true;
+}
+
+void UMenu::hostButtonClicked()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Host Butona tiklandi")));
+	}
+	if (multiplayerSessionsSubsystem)
+	{
+		multiplayerSessionsSubsystem->createSession(4,"FreeForAll");
+	}
+}
+
+void UMenu::joinButtonClicked()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Join Butona tiklandi")));
 	}
 }
