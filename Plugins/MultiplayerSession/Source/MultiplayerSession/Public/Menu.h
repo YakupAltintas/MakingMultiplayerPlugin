@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "Menu.generated.h"
 
 /**
@@ -23,6 +24,12 @@ protected:
 
 	UFUNCTION()
 	void onCreateSession(bool bWasSuccesful);
+	void onFindSessions(const TArray<FOnlineSessionSearchResult>& sessionResult, bool bWasSuccessful);
+	void onJoinSession(EOnJoinSessionCompleteResult::Type Result);
+	UFUNCTION()
+	void onDestroySession(bool bWasSuccesful);
+	UFUNCTION()	
+	void onStartSession(bool bWasSuccesful);
 private:
 	FString mapPath = "/Game/ThirdPerson/Maps/LobbyMap?listen"; 
 

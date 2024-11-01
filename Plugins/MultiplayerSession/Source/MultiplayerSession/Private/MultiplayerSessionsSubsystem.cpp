@@ -35,12 +35,15 @@ void UMultiplayerSessionsSubsystem::createSession(int32 NumpublicConnections, FS
 	}
 	createSessionComplateDelegateHandle = sessionInterface->AddOnCreateSessionCompleteDelegate_Handle(createSessionComplateDelegate);
 	lastSessionSettings = MakeShareable(new FOnlineSessionSettings());
+
 	lastSessionSettings->bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false ;
 	lastSessionSettings->NumPublicConnections = NumpublicConnections;
 	lastSessionSettings->bAllowJoinInProgress = true;
 	lastSessionSettings->bAllowJoinViaPresence = true;
 	lastSessionSettings->bShouldAdvertise= true;
 	lastSessionSettings->bUsesPresence = true;
+	lastSessionSettings->bUseLobbiesIfAvailable = true;
+
 	lastSessionSettings->Set(FName("MatchType"),MatchType,EOnlineDataAdvertisementType::Type::ViaOnlineServiceAndPing);
 
 	const ULocalPlayer* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();

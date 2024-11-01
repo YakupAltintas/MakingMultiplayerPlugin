@@ -4,7 +4,8 @@
 #include "Menu.h"
 #include "Components/Button.h"
 #include "MultiplayerSessionsSubsystem.h"
-
+#include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
 
 void UMenu::menuSetup(int32 NumberOfPublicConnections ,FString TypeOfMatch)
 {
@@ -37,6 +38,10 @@ void UMenu::menuSetup(int32 NumberOfPublicConnections ,FString TypeOfMatch)
 	if (multiplayerSessionsSubsystem)
 	{
 		multiplayerSessionsSubsystem->multiplayerOnCreateSessionComplate.AddDynamic(this,&ThisClass::onCreateSession);
+		multiplayerSessionsSubsystem->multiplayerOnFindSessionsComplate.AddUObject(this,&ThisClass::onFindSessions);
+		multiplayerSessionsSubsystem->multiplayerOnJoinSessionComplete.AddUObject(this, &ThisClass::onJoinSession);
+		multiplayerSessionsSubsystem->multiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::onDestroySession);
+		multiplayerSessionsSubsystem->multiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::onStartSession);
 	}
 
 
@@ -87,6 +92,22 @@ void UMenu::onCreateSession(bool bWasSuccesful)
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("session olusturulamadi! ")));
 		}
 	}
+}
+
+void UMenu::onFindSessions(const TArray<FOnlineSessionSearchResult>& sessionResult, bool bWasSuccessful)
+{
+}
+
+void UMenu::onJoinSession(EOnJoinSessionCompleteResult::Type Result)
+{
+}
+
+void UMenu::onDestroySession(bool bWasSuccesful)
+{
+}
+
+void UMenu::onStartSession(bool bWasSuccesful)
+{
 }
 
 
