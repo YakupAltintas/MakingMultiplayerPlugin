@@ -7,9 +7,8 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "MultiplayerSessionsSubsystem.generated.h"
 
-/**
- *
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnCreateSessionComplate,bool,bWasSuccessful);
+
 UCLASS()
 class MULTIPLAYERSESSION_API UMultiplayerSessionsSubsystem : public UGameInstanceSubsystem
 {
@@ -22,6 +21,8 @@ public:
 	void joinSession(const FOnlineSessionSearchResult &SessionResult);
 	void destroySession();
 	void startSession();
+
+	FMultiplayerOnCreateSessionComplate multiplayerOnCreateSessionComplate;
 protected:
 
 	void onCreateSessionComplate(FName SessionName,bool bWasSuccesful);

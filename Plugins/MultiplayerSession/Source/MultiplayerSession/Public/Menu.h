@@ -20,6 +20,9 @@ public:
 protected:
 	virtual bool Initialize() override;
 	virtual void NativeDestruct() override;
+
+	UFUNCTION()
+	void onCreateSession(bool bWasSuccesful);
 private:
 	FString mapPath = "/Game/ThirdPerson/Maps/LobbyMap?listen"; 
 

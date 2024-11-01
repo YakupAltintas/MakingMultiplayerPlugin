@@ -5,7 +5,8 @@
 #include "Components/Button.h"
 #include "MultiplayerSessionsSubsystem.h"
 
-void UMenu::menuSetup(int32 NumberOfPublicConnections , FString TypeOfMatch )
+
+void UMenu::menuSetup(int32 NumberOfPublicConnections ,FString TypeOfMatch)
 {
 	numPublicConnections = NumberOfPublicConnections;
 	matchType = TypeOfMatch;
@@ -15,7 +16,7 @@ void UMenu::menuSetup(int32 NumberOfPublicConnections , FString TypeOfMatch )
 	bIsFocusable = true;
 
 	UWorld* world = GetWorld();
-	if (world)
+	if (world)	
 	{
 		APlayerController* playerController = world->GetFirstPlayerController();
 		if (playerController)
@@ -32,6 +33,10 @@ void UMenu::menuSetup(int32 NumberOfPublicConnections , FString TypeOfMatch )
 	if (gameInstance)
 	{
 		multiplayerSessionsSubsystem = gameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
+	}
+	if (multiplayerSessionsSubsystem)
+	{
+		multiplayerSessionsSubsystem->multiplayerOnCreateSessionComplate.AddDynamic(this,&ThisClass::onCreateSession);
 	}
 
 
@@ -61,22 +66,36 @@ void UMenu::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-
-
-void UMenu::hostButtonClicked()
+void UMenu::onCreateSession(bool bWasSuccesful)
 {
-	if (GEngine)
+	if (bWasSuccesful)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Host Butona tiklandi")));
-	}
-	if (multiplayerSessionsSubsystem)
-	{
-		multiplayerSessionsSubsystem->createSession(numPublicConnections,matchType);
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("session basariyle olusturuldu! ")));
+		}
 		UWorld* world = GetWorld();
 		if (world)
 		{
 			world->ServerTravel(mapPath);
 		}
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("session olusturulamadi! ")));
+		}
+	}
+}
+
+
+
+void UMenu::hostButtonClicked()
+{
+	if (multiplayerSessionsSubsystem)
+	{
+		multiplayerSessionsSubsystem->createSession(numPublicConnections,matchType);
 	}
 }
 
