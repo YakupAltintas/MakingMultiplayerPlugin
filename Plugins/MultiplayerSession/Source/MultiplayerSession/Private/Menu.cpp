@@ -6,6 +6,7 @@
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSubsystem.h"
 
 void UMenu::menuSetup(int32 NumberOfPublicConnections ,FString TypeOfMatch)
 {
@@ -96,10 +97,34 @@ void UMenu::onCreateSession(bool bWasSuccesful)
 
 void UMenu::onFindSessions(const TArray<FOnlineSessionSearchResult>& sessionResult, bool bWasSuccessful)
 {
+	if (multiplayerSessionsSubsystem == nullptr)
+	{
+		return;
+	}
+
+	for (auto Result : sessionResult)
+	{
+		FString settingsValue;
+		Result.Session.SessionSettings.Get(FName("MatchType"), settingsValue);
+		if (settingsValue == matchType)
+		{
+			multiplayerSessionsSubsystem->joinSession(Result);
+			return;
+		}
+	}
 }
 
 void UMenu::onJoinSession(EOnJoinSessionCompleteResult::Type Result)
 {
+	IOnlineSubsystem* subsystem = IOnlineSubsystem::Get();
+	if (subsystem)
+	{
+		IOnlineSessionPtr sessionInterface = subsystem->GetSessionInterface();
+		if (!sessionInterface.IsValid()) {
+			FString adress;
+			sessionInterface->GetResolvedConnectString(NAME_GameSession, adress);
+		}
+	}
 }
 
 void UMenu::onDestroySession(bool bWasSuccesful)
@@ -122,9 +147,9 @@ void UMenu::hostButtonClicked()
 
 void UMenu::joinButtonClicked()
 {
-	if (GEngine)
+	if (multiplayerSessionsSubsystem)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, FString::Printf(TEXT("Join Butona tiklandi")));
+		multiplayerSessionsSubsystem->findSession(10000);
 	}
 }
 
