@@ -16,7 +16,7 @@ class MULTIPLAYERSESSION_API UMenu : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
-	void menuSetup(int32 NumberOfPublicConnections=4,FString TypeOfMatch=FString(TEXT("FreeForAll")));
+	void menuSetup(int32 NumberOfPublicConnections=4,FString TypeOfMatch=FString(TEXT("FreeForAll")),FString lobbyPath = FString(TEXT("/Game/ThirdPerson/Maps/LobbyMap")));
 
 protected:
 	virtual bool Initialize() override;
@@ -31,8 +31,6 @@ protected:
 	UFUNCTION()	
 	void onStartSession(bool bWasSuccesful);
 private:
-	FString mapPath = "/Game/ThirdPerson/Maps/LobbyMap?listen"; 
-
 	UPROPERTY(meta = (BindWidget));
 	class UButton* hostButton; 
 
@@ -51,4 +49,6 @@ private:
 
 	int32 numPublicConnections{ 4 };
 	FString matchType{TEXT("FreeForAll")};
+	FString pathToLobby{TEXT("")};
+
 };
