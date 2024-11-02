@@ -43,7 +43,7 @@ void UMultiplayerSessionsSubsystem::createSession(int32 NumpublicConnections, FS
 	lastSessionSettings->bShouldAdvertise = true;
 	lastSessionSettings->bUsesPresence = true;
 	lastSessionSettings->bUseLobbiesIfAvailable = true;
-
+	lastSessionSettings->BuildUniqueId = 1;
 	lastSessionSettings->Set(FName("MatchType"), MatchType, EOnlineDataAdvertisementType::Type::ViaOnlineServiceAndPing);
 
 	const ULocalPlayer* localPlayer = GetWorld()->GetFirstLocalPlayerFromController();
@@ -64,6 +64,7 @@ void UMultiplayerSessionsSubsystem::findSession(int32 MaxSearchResult)
 		return;
 	}
 	findSessionsComplateDelegateHandle = sessionInterface->AddOnFindSessionsCompleteDelegate_Handle(findSessionsComplateDelegate);
+		
 	lastSessionSearch = MakeShareable(new FOnlineSessionSearch());
 	lastSessionSearch->MaxSearchResults = MaxSearchResult;
 	lastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false;
@@ -131,7 +132,7 @@ void UMultiplayerSessionsSubsystem::onFindSessionsComplate(bool bWasSuccesful)
 
 void UMultiplayerSessionsSubsystem::onJoinSessionComplate(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	if (!sessionInterface.IsValid())
+	if (sessionInterface)
 	{
 		sessionInterface->ClearOnJoinSessionCompleteDelegate_Handle(joinSessionComplateDelegateHandle);
 	}

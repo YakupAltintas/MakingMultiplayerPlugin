@@ -109,6 +109,10 @@ void UMenu::onFindSessions(const TArray<FOnlineSessionSearchResult>& sessionResu
 		if (settingsValue == matchType)
 		{
 			multiplayerSessionsSubsystem->joinSession(Result);
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, FString::Printf(TEXT("session bulundu! ")));
+			}
 			return;
 		}
 	}
@@ -120,9 +124,14 @@ void UMenu::onJoinSession(EOnJoinSessionCompleteResult::Type Result)
 	if (subsystem)
 	{
 		IOnlineSessionPtr sessionInterface = subsystem->GetSessionInterface();
-		if (!sessionInterface.IsValid()) {
+		if (sessionInterface.IsValid()) {
 			FString adress;
 			sessionInterface->GetResolvedConnectString(NAME_GameSession, adress);
+			APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
+			if (PlayerController)
+			{
+				PlayerController->ClientTravel(adress, ETravelType::TRAVEL_Absolute);
+			}
 		}
 	}
 }
