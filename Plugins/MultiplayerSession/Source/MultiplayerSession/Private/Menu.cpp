@@ -93,6 +93,7 @@ void UMenu::onCreateSession(bool bWasSuccesful)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("session olusturulamadi! ")));
 		}
+		hostButton->SetIsEnabled(true);
 	}
 }
 
@@ -117,6 +118,10 @@ void UMenu::onFindSessions(const TArray<FOnlineSessionSearchResult>& sessionResu
 			return;
 		}
 	}
+	if (!bWasSuccessful || sessionResult.Num() == 0)
+	{
+		joinButton->SetIsEnabled(true);
+	}
 }
 
 void UMenu::onJoinSession(EOnJoinSessionCompleteResult::Type Result)
@@ -135,6 +140,10 @@ void UMenu::onJoinSession(EOnJoinSessionCompleteResult::Type Result)
 			}
 		}
 	}
+	if (Result != EOnJoinSessionCompleteResult::Success)
+	{
+		joinButton->SetIsEnabled(true);
+	}
 }
 
 void UMenu::onDestroySession(bool bWasSuccesful)
@@ -149,6 +158,7 @@ void UMenu::onStartSession(bool bWasSuccesful)
 
 void UMenu::hostButtonClicked()
 {
+	hostButton->SetIsEnabled(false);
 	if (multiplayerSessionsSubsystem)
 	{
 		multiplayerSessionsSubsystem->createSession(numPublicConnections,matchType);
@@ -157,6 +167,7 @@ void UMenu::hostButtonClicked()
 
 void UMenu::joinButtonClicked()
 {
+	joinButton->SetIsEnabled(false);
 	if (multiplayerSessionsSubsystem)
 	{
 		multiplayerSessionsSubsystem->findSession(10000);
